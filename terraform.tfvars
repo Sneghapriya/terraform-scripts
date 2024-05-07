@@ -1,0 +1,12 @@
+project_id             = "lumen-b-ctl-047"
+region                 =  "us-central1-a"
+cluster_name           = "test-cluster"
+cluster_location       = "us-central1-c"
+remove_default_node_pool = "true"
+initial_node_count       = "1"
+node_name               = "node1"
+node_count             = "1"
+preemptible            = "true"
+machine_type           = "e2-medium"
+servie_account         = "standard-gke-cluster@lumen-b-ctl-047.iam.gserviceaccount.com"
+oauth_scopes           = ["https://www.googleapis.com/auth/cloud-platform"]
