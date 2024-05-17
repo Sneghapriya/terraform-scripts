@@ -1,26 +1,51 @@
-resource "google_container_cluster" "primary" {
-  name     = var.cluster_name
-  location = var.cluster_location
-
-  # We can't create a cluster with no node pool defined, but we want to only use
-  # separately managed node pools. So we create the smallest possible default
-  # node pool and immediately delete it.
-  remove_default_node_pool = var.remove_default_node_pool
-  initial_node_count       = var.initial_node_count
-}
-
-resource "google_container_node_pool" "primary_preemptible_nodes" {
-  name       = var.node_name
-  location   = var.cluster_location
-  cluster    = google_container_cluster.primary.name
-  node_count = var.node_count
-
-  node_config {
-    preemptible  = var.preemptible
-    machine_type = var.machine_type
-
-    service_account = var.service_account
-    oauth_scopes    = var.oauth_scopes
+terraform {
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 4.0.0"
+    }
   }
 }
 
+resource "google_container_cluster" "primary" {
+  name     = "test_cluster"
+  location = "us-central1-a"
+ project  = "lumen-b-ctl-047"
+
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {
+  }
+  remove_default_node_pool = true
+
+  release_channel {
+    channel = "REGULAR"
+  }
+}
+
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool"
+  location  = "us-central1-a"
+  project   = "lumen-b-ctl-047"
+  cluster   = google_container_cluster.primary.name
+  node_count = 1
+
+  autoscaling {}
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
+  node_config {
+    machine_type = "e2-medium"
+    disk_size_gb = 100
+    disk_type    = "pd-standard"
+
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+  }
+}
