@@ -10,7 +10,7 @@ terraform {
 resource "google_container_cluster" "primary" {
   name     = "test_cluster"
   location = "us-central1-a"
- project  = "lumen-b-ctl-047"
+ project  = ""
 
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
@@ -25,7 +25,7 @@ resource "google_container_cluster" "primary" {
 resource "google_container_node_pool" "primary_nodes" {
   name       = "primary-node-pool"
   location  = "us-central1-a"
-  project   = "lumen-b-ctl-047"
+  project   = ""
   cluster   = google_container_cluster.primary.name
   node_count = 1
 
