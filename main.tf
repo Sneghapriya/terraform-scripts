@@ -13,41 +13,24 @@ resource "google_container_cluster" "primary" {
   location = "us-central1-a"
  project  = "sampleproject"
 
-  remove_default_node_pool = true
-  initial_node_count       = 1
-
   networking_mode = "VPC_NATIVE"
+ remove_default_node_pool = true
 
-  ip_allocation_policy {
-  }
-}
+  node_pool {
+    name       = "primary-node-pool"
+    node_count = 1
 
-resource "google_container_node_pool" "pool1" {
-  name       = "pool-1"
-  location  = "us-central1-a"
-  project   = "sampleproject"
-  cluster   = google_container_cluster.primary.name
-
-  node_config {
-    machine_type = "n1-standard-1"
+    autoscaling {
+      disabled = true
+    }
   }
 
-  autoscaling {
-    enabled = false
-  }
-}
+  node_pool {
+    name       = "secondary-node-pool"
+    node_count = 1
 
-resource "google_container_node_pool" "pool2" {
-  name       = "pool-2"
-  location  = "us-central1-a"
-  project   = "sampleproject"
-  cluster   = google_container_cluster.primary.name
-
-  node_config {
-    machine_type = "n1-standard-2"
-  }
-
-  autoscaling {
-    enabled = false
+    autoscaling {
+      disabled = true
+    }
   }
 }
