@@ -10,27 +10,44 @@ terraform {
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1-a"
+  location = "us-central1"
  project  = "sampleproject"
 
-  networking_mode = "VPC_NATIVE"
- remove_default_node_pool = true
+  remove_default_node_pool = true
+  initial_node_count       = 1
 
-  node_pool {
-    name       = "primary-node-pool"
-    node_count = 1
+  networking_mode = "k8s_ipo_alloc"
 
-    autoscaling {
-      disabled = true
-    }
+  ip_allocation_policy {
+  }
+}
+
+resource "google_container_node_pool" "pool_1" {
+  name       = "pool-1"
+  location  = "us-central1"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+
+  node_config {
+    machine_type = "n1-standard-1"
   }
 
-  node_pool {
-    name       = "secondary-node-pool"
-    node_count = 1
+  autoscaling {
+    enabled = false
+  }
+}
 
-    autoscaling {
-      disabled = true
-    }
+resource "google_container_node_pool" "pool_2" {
+  name       = "pool-2"
+  location  = "us-central1"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+
+  node_config {
+    machine_type = "n1-standard-2"
+  }
+
+  autoscaling {
+    enabled = false
   }
 }
