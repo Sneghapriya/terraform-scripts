@@ -16,32 +16,25 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking_mode = "k8s_service"
-
+  networking_mode = "k8s_ip_aliases_with_ipsec"
 }
 
-resource "google_container_node_pool" "pool1" {
+resource "google_container_node_pool" "pool_1" {
   name       = "pool-1"
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-
   node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
+  autoscaling {}
 }
 
-resource "google_container_node_pool" "pool2" {
+resource "google_container_node_pool" "pool_2" {
   name       = "pool-2"
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-
   node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
+  autoscaling {}
 }
