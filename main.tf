@@ -10,31 +10,37 @@ terraform {
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1"
- project  = "sampleproject"
-
+  location = "us-central1-a"
+ project = "sampleproject"
   remove_default_node_pool = true
-  initial_node_count       = 1
-
-  networking_mode = "k8s_ip_aliases_with_ipsec"
+  initial_node_pools {
+    name             = "primary-pool"
+    initial_node_count = 1
+  }
+  initial_node_pools {
+    name             = "secondary-pool"
+    initial_node_count = 1
+  }
 }
 
-resource "google_container_node_pool" "pool_1" {
-  name       = "pool-1"
-  location  = "us-central1"
-  project   = "sampleproject"
+resource "google_container_node_pool" "primary_pool" {
+  name       = "primary-pool"
+  location  = "us-central1-a"
   cluster   = google_container_cluster.primary.name
+  project = "sampleproject"
   node_count = 1
-
-  autoscaling {}
+  autoscaling {
+    enabled = false
+  }
 }
 
-resource "google_container_node_pool" "pool_2" {
-  name       = "pool-2"
-  location  = "us-central1"
-  project   = "sampleproject"
+resource "google_container_node_pool" "secondary_pool" {
+  name       = "secondary-pool"
+  location  = "us-central1-a"
   cluster   = google_container_cluster.primary.name
+  project = "sampleproject"
   node_count = 1
-
-  autoscaling {}
+  autoscaling {
+    enabled = false
+  }
 }
