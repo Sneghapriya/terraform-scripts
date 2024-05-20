@@ -3,71 +3,77 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "~> 4.0.0"
+      version = "~> 4.0"
     }
   }
 }
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1"
+  location = "us-central1-a"
  project  = "sampleproject"
 
-  remove_default_node_pool = true
+  networking_mode = "VPC_NATIVE"
+ remove_default_node_pool = true
   initial_node_count = 1
- networking_mode = "k8s-ip-alias"
+
   ip_allocation_policy {
+    cluster_ipv4_cidr_block  = "/20"
   }
 }
 
 resource "google_container_node_pool" "pool1" {
   name       = "pool-1"
-  location  = "us-central1"
+  location  = "us-central1-a"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
+  autoscaling = false
+  node_count = 2
+
   management {
     auto_repair  = true
     auto_upgrade = true
   }
+
   node_config {
     machine_type = "n1-standard-1"
     disk_size_gb = 100
+    disk_type    = "pd-standard"
+
     oauth_scopes = [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
+ "https://www.googleapis.com/auth/compute",
+ "https://www.googleapis.com/auth/devstorage.read_only",
+ "https://www.googleapis.com/auth/logging.write",
+ "https://www.googleapis.com/auth/monitoring",
     ]
   }
 }
 
 resource "google_container_node_pool" "pool2" {
   name       = "pool-2"
-  location  = "us-central1"
+  location  = "us-central1-a"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
+  autoscaling = false
+  node_count = 2
+
   management {
     auto_repair  = true
     auto_upgrade = true
   }
+
   node_config {
     machine_type = "n1-standard-1"
     disk_size_gb = 100
+    disk_type    = "pd-standard"
+
     oauth_scopes = [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
+ "https://www.googleapis.com/auth/compute",
+ "https://www.googleapis.com/auth/devstorage.read_only",
+ "https://www.googleapis.com/auth/logging.write",
+ "https://www.googleapis.com/auth/monitoring",
     ]
   }
 }
