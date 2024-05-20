@@ -14,30 +14,64 @@ resource "google_container_cluster" "primary" {
  project  = "sampleproject"
 
   remove_default_node_pool = true
+  initial_node_count       = 1
 
-  network = "default"
+  networking_mode = "k8s_ipo_alloc"
 
-  node_pool {
-    name       = "primary-node-pool"
-    node_count = 1
+  ip_allocation_policy {
+  }
+}
 
-    autoscaling = false
+resource "google_container_node_pool" "pool1" {
+  name       = "pool-1"
+  location  = "us-central1"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+  node_count = 1
 
-    management {
-      auto_repair  = true
-      auto_upgrade = true
-    }
+  autoscaling {
+    enabled = false
+  }
+  management {
+    auto_repair  = true
+    auto_upgrade = true
   }
 
-  node_pool {
-    name       = "secondary-node-pool"
-    node_count = 1
+  node_config {
+    machine_type = "n1-standard-1"
+    disk_size_gb = 100
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
+  }
+}
 
-    autoscaling = false
+resource "google_container_node_pool" "pool2" {
+  name       = "pool-2"
+  location  = "us-central1"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+  node_count = 1
 
-    management {
-      auto_repair  = true
-      auto_upgrade = true
-    }
+  autoscaling {
+    enabled = false
+  }
+  management {
+    auto_repair  = true
+    auto_upgrade = true
+  }
+
+  node_config {
+    machine_type = "n1-standard-1"
+    disk_size_gb = 100
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/compute",
+      "https://www.googleapis.com/auth/devstorage.read_only",
+      "https://www.googleapis.com/auth/logging.write",
+      "https://www.googleapis.com/auth/monitoring",
+    ]
   }
 }
