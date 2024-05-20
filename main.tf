@@ -2,7 +2,7 @@
 terraform {
   required_providers {
     google = {
-      source  = "hashicorp/google"
+      source = "hashicorp/google"
       version = "~> 4.0"
     }
   }
@@ -11,35 +11,36 @@ terraform {
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
   location = "us-central1-a"
-  project  = "sampleproject"
+ project  = "sampleproject"
+  remove_default_node_pool = true
+  initial_node_count = 1
 
   networking_mode = "VPC_NATIVE"
-  initial_node_count = 1
 
   ip_allocation_policy {
   }
+}
 
-  remove_default_node_pool = true
+resource "google_container_node_pool" "pool_1" {
+  name       = "pool1"
+  location  = "us-central1-a"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+  node_count = 1
 
-  node_pool {
-    name       = "default-pool"
-    node_count = 1
-    autoscaling = false
-
-    management {
-      auto_repair  = true
-      auto_upgrade = true
-    }
+  autoscaling {
+    enabled = false
   }
+}
 
-  node_pool {
-    name       = "secondary-pool"
-    node_count = 1
-    autoscaling = false
+resource "google_container_node_pool" "pool_2" {
+  name       = "pool2"
+  location  = "us-central1-a"
+  project   = "sampleproject"
+  cluster   = google_container_cluster.primary.name
+  node_count = 1
 
-    management {
-      auto_repair  = true
-      auto_upgrade = true
-    }
+  autoscaling {
+    enabled = false
   }
 }
