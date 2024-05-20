@@ -10,33 +10,47 @@ terraform {
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1-a"
+  location = "us-central1"
  project  = "sampleproject"
 
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking {
-    network = "default"
+  networking_mode = "VPC_NATIVE"
+
+  workload_identity_config {
+ workload_pool = "sampleproject.svc.id.goog"
   }
 }
 
 resource "google_container_node_pool" "pool1" {
   name       = "pool-1"
-  location  = "us-central1-a"
+  location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {}
+  node_config {
+    machine_type = "n1-standard-1"
+    disk_size_gb = 100
+  }
+
+  autoscaling {
+    enabled = false
+  }
 }
 
 resource "google_container_node_pool" "pool2" {
   name       = "pool-2"
-  location  = "us-central1-a"
+  location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {}
+  node_config {
+    machine_type = "n1-standard-2"
+    disk_size_gb = 200
+  }
+
+  autoscaling {
+    enabled = false
+  }
 }
