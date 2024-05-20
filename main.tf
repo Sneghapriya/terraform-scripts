@@ -18,19 +18,14 @@ resource "google_container_cluster" "primary" {
 
   networking_mode = "k8s_service"
 
-  ip_allocation_policy {
-  }
 }
 
 resource "google_container_node_pool" "pool1" {
   name       = "pool-1"
   location  = "us-central1-a"
-  project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-
-  node_config {
-    machine_type = "n1-standard-1"
-  }
+  project    = "sampleproject"
+  node_count = 1
 
   autoscaling {
     enabled = false
@@ -40,12 +35,9 @@ resource "google_container_node_pool" "pool1" {
 resource "google_container_node_pool" "pool2" {
   name       = "pool-2"
   location  = "us-central1-a"
-  project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-
-  node_config {
-    machine_type = "n1-standard-2"
-  }
+  project    = "sampleproject"
+  node_count = 1
 
   autoscaling {
     enabled = false
