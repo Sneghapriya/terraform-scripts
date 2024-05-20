@@ -1,45 +1,46 @@
 
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 4.0"
-    }
-  }
+provider "google" {
+  project = "sampleproject"
 }
 
 resource "google_container_cluster" "primary" {
-  name     = "test-cluster"
-  project  = "sampleproject"
-  location = "us-central1"
+ name     = "test-cluster"
+ location = "us-central1-a"
 
-  remove_default_node_pool = true
-  initial_node_count       = 1
- networking_mode = "VPC_NATIVE"
+  networking_mode = "VPC_NATIVE"
   ip_allocation_policy {
   }
-}
+ remove_default_node_pool = true
 
-resource "google_container_node_pool" "primary_nodes" {
-  name       = "primary-node-pool"
-  location  = "us-central1"
-  project   = "sampleproject"
-  cluster   = google_container_cluster.primary.name
-  node_count = 1
+  node_pool {
+    name       = "primary-node-pool"
+    node_count = 1
 
-  autoscaling {
-    enabled = false
+    config {
+      machine_type = "e2-medium"
+      disk_size_gb = 100
+      oauth_scopes = [
+ "https://www.googleapis.com/auth/compute",
+ "https://www.googleapis.com/auth/devstorage.read_only",
+ "https://www.googleapis.com/auth/logging.write",
+ "https://www.googleapis.com/auth/monitoring",
+      ]
+    }
   }
-}
 
-resource "google_container_node_pool" "secondary_nodes" {
-  name       = "secondary-node-pool"
-  location  = "us-central1"
-  project   = "sampleproject"
-  cluster   = google_container_cluster.primary.name
-  node_count = 1
+  node_pool {
+    name       = "secondary-node-pool"
+    node_count = 1
 
-  autoscaling {
-    enabled = false
+    config {
+      machine_type = "e2-medium"
+      disk_size_gb = 100
+      oauth_scopes = [
+ "https://www.googleapis.com/auth/compute",
+ "https://www.googleapis.com/auth/devstorage.read_only",
+ "https://www.googleapis.com/auth/logging.write",
+ "https://www.googleapis.com/auth/monitoring",
+      ]
+    }
   }
 }
