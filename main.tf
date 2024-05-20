@@ -16,13 +16,10 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking_mode = "VPC_NATIVE"
-
-  ip_allocation_policy {
-  }
+  networking_mode = "k8s_ip_aliases_with_routes"
 }
 
-resource "google_container_node_pool" "pool1" {
+resource "google_container_node_pool" "pool_1" {
   name       = "pool-1"
   location  = "us-central1-a"
   project   = "sampleproject"
@@ -37,7 +34,7 @@ resource "google_container_node_pool" "pool1" {
   }
 }
 
-resource "google_container_node_pool" "pool2" {
+resource "google_container_node_pool" "pool_2" {
   name       = "pool-2"
   location  = "us-central1-a"
   project   = "sampleproject"
