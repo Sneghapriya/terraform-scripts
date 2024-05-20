@@ -32,6 +32,7 @@ resource "google_container_node_pool" "pool1" {
   autoscaling {
     enabled = false
   }
+
   management {
     auto_repair  = true
     auto_upgrade = true
@@ -59,6 +60,7 @@ resource "google_container_node_pool" "pool2" {
   autoscaling {
     enabled = false
   }
+
   management {
     auto_repair  = true
     auto_upgrade = true
