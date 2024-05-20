@@ -16,10 +16,8 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking_mode = "k8s_ipo_alloc"
+  networking_mode = "k8s_service"
 
-  ip_allocation_policy {
-  }
 }
 
 resource "google_container_node_pool" "pool1" {
@@ -31,7 +29,6 @@ resource "google_container_node_pool" "pool1" {
   node_config {
     machine_type = "n1-standard-1"
   }
-
   autoscaling {
     enabled = false
   }
@@ -46,7 +43,6 @@ resource "google_container_node_pool" "pool2" {
   node_config {
     machine_type = "n1-standard-2"
   }
-
   autoscaling {
     enabled = false
   }
