@@ -16,9 +16,10 @@ resource "google_container_cluster" "primary" {
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking_mode = "k8s_ipo_alloc"
+  networking_mode = "VPC_NATIVE"
 
-  ip_allocation_policy {
+  workload_identity_config {
+ workload_pool = "sampleproject.svc.id.goog"
   }
 }
 
@@ -32,6 +33,7 @@ resource "google_container_node_pool" "pool1" {
   autoscaling {
     enabled = false
   }
+
   management {
     auto_repair  = true
     auto_upgrade = true
@@ -59,6 +61,7 @@ resource "google_container_node_pool" "pool2" {
   autoscaling {
     enabled = false
   }
+
   management {
     auto_repair  = true
     auto_upgrade = true
