@@ -10,18 +10,18 @@ terraform {
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
+  project  = "sampleproject"
   location = "us-central1"
- project  = "sampleproject"
 
   remove_default_node_pool = true
   initial_node_count       = 1
-
-  networking_mode = "k8s_service"
-
+ networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {
+  }
 }
 
-resource "google_container_node_pool" "pool1" {
-  name       = "pool-1"
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool"
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
@@ -32,8 +32,8 @@ resource "google_container_node_pool" "pool1" {
   }
 }
 
-resource "google_container_node_pool" "pool2" {
-  name       = "pool-2"
+resource "google_container_node_pool" "secondary_nodes" {
+  name       = "secondary-node-pool"
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
