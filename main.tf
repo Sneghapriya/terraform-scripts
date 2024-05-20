@@ -10,48 +10,33 @@ terraform {
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1"
-  project  = "sampleproject"
+  location = "us-central1-a"
+ project  = "sampleproject"
 
   remove_default_node_pool = true
   initial_node_count       = 1
 
-  networking_mode = "k8s-pod-networking"
-
-  ip_allocation_policy {
+  networking {
+    network = "default"
   }
 }
 
 resource "google_container_node_pool" "pool1" {
   name       = "pool-1"
-  location  = "us-central1"
+  location  = "us-central1-a"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
   node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
-
-  management {
-    auto_repair  = true
-    auto_upgrade = true
-  }
+  autoscaling {}
 }
 
 resource "google_container_node_pool" "pool2" {
   name       = "pool-2"
-  location  = "us-central1"
+  location  = "us-central1-a"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
   node_count = 1
 
-  autoscaling {
-    enabled = false
-  }
-
-  management {
-    auto_repair  = true
-    auto_upgrade = true
-  }
+  autoscaling {}
 }
