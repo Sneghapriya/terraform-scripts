@@ -11,15 +11,14 @@ terraform {
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
   location = "us-central1"
-  project  = "sampleproject"
+ project  = "sampleproject"
 
   remove_default_node_pool = true
   initial_node_count       = 1
 
   networking_mode = "k8s_service"
 
-  workload_identity_config {
-    workload_pool = "${google_project.project.project_id}.svc.workload.identity"
+  ip_allocation_policy {
   }
 }
 
@@ -28,9 +27,14 @@ resource "google_container_node_pool" "pool1" {
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {}
+  node_config {
+    machine_type = "n1-standard-1"
+  }
+
+  autoscaling {
+    enabled = false
+  }
 }
 
 resource "google_container_node_pool" "pool2" {
@@ -38,11 +42,12 @@ resource "google_container_node_pool" "pool2" {
   location  = "us-central1"
   project   = "sampleproject"
   cluster   = google_container_cluster.primary.name
-  node_count = 1
 
-  autoscaling {}
-}
+  node_config {
+    machine_type = "n1-standard-2"
+  }
 
-resource "google_project" "project" {
-  project_id = "sampleproject"
+  autoscaling {
+    enabled = false
+  }
 }
