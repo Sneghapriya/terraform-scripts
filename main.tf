@@ -14,7 +14,7 @@ terraform {
 
 provider "google" {
   project = "lumen-b-ctl-047"
-  credentials = "key.json"
+  credentials = file("key.json")
 }
 
 resource "google_container_cluster" "primary" {
