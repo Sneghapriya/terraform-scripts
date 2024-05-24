@@ -19,6 +19,8 @@ jobs:
         GCP_PROJECT: "lumen-b-ctl-047"
       run: |
         echo "$GCP_SECRET" > key.json 
+        gcloud auth activate-service-account --key-file=key.json
+        gcloud config set project lumen-b-ctl-047
     
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
