@@ -1,41 +1,43 @@
-name: Terraform automtion
- 
+name: Terraform Automation
+
 on:
   push:
     branches:
-      - main  # specify the branch you want to trigger the deployment
- 
-jobs:        
+      - main  # Specify the branch you want to trigger the deployment
+
+jobs:
   terraform:
     runs-on: ubuntu-latest
- 
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-    
+
     - name: Configure Google Cloud credentials
       env:
         GCP_SECRET: ${{ secrets.GCP_GKE_SECRET }}
-        GCP_PROJECT: "lumen-b-ctl-047"
       run: |
-        echo "$GCP_SECRET" > key.json 
+        echo "$GCP_SECRET" > key.json
         gcloud auth activate-service-account --key-file=key.json
         gcloud config set project lumen-b-ctl-047
-    
+
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 0.15.5
-    
+
     - name: Terraform Init
-      run: |
-        terraform init
+      run: terraform init
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_GKE_SECRET }}
 
     - name: Terraform Plan
-      run: |
-        terraform plan
-   
- 
+      run: terraform plan -input=false
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_GKE_SECRET }}
+        TF_LOG: DEBUG
+
     - name: Terraform Apply
-      run: |
-        terraform apply -auto-approve
+      run: terraform apply -auto-approve
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_GKE_SECRET }}
