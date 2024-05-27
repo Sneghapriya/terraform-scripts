@@ -2,59 +2,23 @@
 terraform {
   required_providers {
     google = {
-      source  = "hashicorp/google"
-      version = "~> 4.0"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.0"
+      source = "hashicorp/google"
     }
   }
 }
 
 provider "google" {
-  project = "lumen-b-ctl-047"
-  credentials = file("key.json")
+  credentials = file("credentials.json")
+  project     = "lumen-b-ctl-047"
 }
 
 resource "google_container_cluster" "primary" {
   name     = "test-cluster"
-  location = "us-central1"
+  location = "us-central1-c"
 
-  networking_mode = "SYSTEM_DEFAULT"
+  initial_node_count = 2
 
-  remove_default_node_pool = true
-
-  initial_node_count = 1
-
-  release_channel {
-    channel = "REGULAR"
-  }
-}
-
-resource "google_container_node_pool" "pools" {
-  for_each = {
-    "pool-0" = {
-      name    = "pool-0"
-      version = "latest"
-    },
-    "pool-1" = {
-      name    = "pool-1"
-      version = "latest"
-    }
-  }
-
-  name       = each.value.name
-  location  = "us-central1"
-  cluster   = google_container_cluster.primary.name
-  node_count = 1
-
-  autoscaling {
-    disabled = true
-  }
-
-  management {
-    auto_repair  = true
-    auto_upgrade = true
+  node_config {
+    machine_type = "n1-standard-1"
   }
 }
