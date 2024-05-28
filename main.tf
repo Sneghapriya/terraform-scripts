@@ -1,21 +1,19 @@
 
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google"
-    }
-  }
-}
-
 provider "google" {
   credentials = file("credentials.json")
   project     = "lumen-b-ctl-047"
 }
 
-resource "google_storage_bucket" "bucket" {
-  name          = "automation-bucket-test-terraform1"
-  location      = "US-CENTRAL1"
-  force_destroy = false
-  storage_class = "STANDARD"
-  uniform_bucket_level_access = true
+resource "google_compute_instance" "default" {
+  name         = "tf-instance"
+  machine_type = "n1-standard-1"
+  zone         = "us-central1-a"
+
+ boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {}
 }
