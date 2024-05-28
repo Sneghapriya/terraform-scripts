@@ -12,13 +12,10 @@ provider "google" {
   project     = "lumen-b-ctl-047"
 }
 
-resource "google_container_cluster" "primary" {
-  name     = "test-cluster"
-  location = "us-central1-c"
-
-  initial_node_count = 2
-
-  node_config {
-    machine_type = "n1-standard-1"
-  }
+resource "google_storage_bucket" "bucket" {
+  name          = "automation-bucket-test-terraform1"
+  location      = "US-CENTRAL1"
+  force_destroy = false
+  storage_class = "STANDARD"
+  uniform_bucket_level_access = true
 }
