@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("path/to/credentials.json")
+  credentials = "key.json"
   project     = "lumen-b-ctl-047"
 }
 
