@@ -9,14 +9,22 @@ terraform {
 }
 
 provider "google" {
-  credentials = file("key.json")
+  credentials = "key.json"
   project     = "lumen-b-ctl-047"
-  region      = "us-central1"
 }
 
-resource "google_storage_bucket" "default" {
-  name           = "automation-terraform"
-  location       = "US-CENTRAL1"
-  storage_class  = "STANDARD"
-  uniform_bucket_level_access = true
+resource "google_compute_instance" "default" {
+  name         = "tf-instance"
+  machine_type = "n1-standard-1"
+  zone         = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-12"
+    }
+  }
+
+  network_interface {
+    network = "default"
+  }
 }
