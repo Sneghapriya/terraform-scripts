@@ -14,7 +14,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "default" {
-  name           = "terraform-automation"
+  name           = "terra-automation-bucket"
   location       = "us-central1"
   storage_class  = "STANDARD"
   uniform_bucket_level_access = true
